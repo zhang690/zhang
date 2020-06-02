@@ -1,0 +1,110 @@
+<template>
+	<div class="subnvue" @click.stop="">
+		<div class="mask" @click="hide()"></div>
+		<div class="bottom">
+			<div v-if="!flag"></div>
+			<!-- input    confirm-type="send"  :cursor-spacing="space" -->
+			<div class="inputBlock"><textarea class="input" @confirm="clickSubmit" focus="true" @keyboardheightchange="heightChange" v-model="message" 
+			:placeholder="placeholder" v-if="flag" maxlength="30" placeholder-style="color:#999999"/></div>
+			<text class="sendBtn" @click="clickSubmit">发送</text>
+		</div>
+	</div>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			flag: false,
+			message: '',
+			placeholder: '说点儿好听的~',
+			space: 0 //兼容ios
+		};
+	},
+	beforeCreate() {},
+	created() {
+		//ios首页输入兼容
+		uni.getSystemInfo({
+			success: e => {
+				if (e.platform == 'ios') this.space = -50;
+			}
+		});
+		uni.$on('showInput', () => {
+			this.flag = true;
+		});
+	},
+	destroyed() {
+		uni.$off('showInput');
+	},
+	methods: {
+		hide() {
+			uni.hideKeyboard();
+			setTimeout(() => {
+				this.quit();
+			}, 200);
+		},
+		heightChange(e) {
+			console.log(e.detail.height);
+			if (e.detail.height <= 0) this.quit();
+		},
+		clickSubmit() {
+			if (this.message == '') return;
+			uni.$emit('sendComment', this.message);
+			this.quit();
+		},
+		quit() {
+			uni.hideKeyboard();
+			this.message = '';
+			uni.$emit('showComment');
+			uni.getSubNVueById('input-box').hide();
+			this.flag = false;
+		},
+		confirm(v) {
+			console.log(v);
+		}
+	},
+};
+</script>
+
+<style lang="scss" scoped>
+.subnvue {
+	flex-direction: column;
+	flex: 1;
+	background-color: transparent;
+}
+.mask {
+	flex: 1;
+	background-color: #000;
+	opacity: 0.2;
+}
+.bottom {
+	background-color: #fff;
+	padding: 16rpx 20rpx;
+	align-items: center;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.inputBlock{
+	border-width: 1px;
+	border-style: solid;
+	border-color: rgba(219,219,219,1);
+	border-radius:40rpx;
+	width:630rpx;
+	height:82rpx;
+}
+.input {
+	width:630rpx;
+	// height:94rpx;
+	height:82rpx;
+	// padding: 16rpx 32rpx 28rpx;
+	padding: 20rpx 32rpx;
+	font-size: 28rpx;
+	line-height: 40rpx;
+	color: #151515;
+}
+.sendBtn{
+	font-size:32rpx;
+	color: #0076FF;
+	line-height: 48rpx;
+}
+</style>

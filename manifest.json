@@ -1,0 +1,233 @@
+{
+    "name" : "轻听树下",
+    "appid" : "__UNI__B21A190",
+    "description" : "听课",
+    "versionName" : "1.0.2",
+    "versionCode" : 102,
+    "transformPx" : false,
+    /* 5+App特有相关 */
+    "app-plus" : {
+        "nvueCompiler" : "uni-app",
+        "usingComponents" : true,
+        "splashscreen" : {
+            "alwaysShowBeforeRender" : false,
+            "waiting" : false,
+            "autoclose" : true,
+            "delay" : 0
+        },
+        /* 模块配置 */
+        "modules" : {
+            "OAuth" : {},
+            "Share" : {},
+            "VideoPlayer" : {},
+            "Payment" : {
+                "description" : "支付"
+            },
+            "Push" : {}
+        },
+        /* 应用发布信息 */
+        "distribute" : {
+            /* android打包配置 */
+            "android" : {
+                "UIBackgroundModes" : "audio",
+                "permissions" : [
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+                    "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+                    "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+                ],
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
+                "Payment" : {
+                    "description" : "支付"
+                },
+                "autoSdkPermissions" : false
+            },
+            /* ios打包配置 */
+            "ios" : {
+                "idfa" : false,
+                "UIBackgroundModes" : "audio",
+                "privacyDescription" : {
+                    "NSPhotoLibraryAddUsageDescription" : "保存客服微信二维码用"
+                }
+            },
+            /* SDK配置 */
+            "sdkConfigs" : {
+                "payment" : {
+                    "alipay" : {},
+                    "weixin" : {
+                        "appid" : "wx4c421a57ebe837db",
+                        "UniversalLinks" : "https://www.qingtingshuxia.com/"
+                    },
+                    "appleiap" : {}
+                },
+                "oauth" : {
+                    "weixin" : {
+                        "appid" : "wx4c421a57ebe837db",
+                        "appsecret" : "abc5098f347e3f4b449287ef6399c0c3",
+                        "UniversalLinks" : "https://www.qingtingshuxia.com/"
+                    },
+                    "apple" : {}
+                },
+                "push" : {
+                    "unipush" : {}
+                },
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wx4c421a57ebe837db",
+                        "UniversalLinks" : "https://www.qingtingshuxia.com/"
+                    }
+                },
+                "ad" : {}
+            },
+            "icons" : {
+                "android" : {
+                    "hdpi" : "unpackage/res/icons/72x72.png",
+                    "xhdpi" : "unpackage/res/icons/96x96.png",
+                    "xxhdpi" : "unpackage/res/icons/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+                },
+                "ios" : {
+                    "appstore" : "unpackage/res/icons/1024x1024.png",
+                    "ipad" : {
+                        "app" : "unpackage/res/icons/76x76.png",
+                        "app@2x" : "unpackage/res/icons/152x152.png",
+                        "notification" : "unpackage/res/icons/20x20.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "proapp@2x" : "unpackage/res/icons/167x167.png",
+                        "settings" : "unpackage/res/icons/29x29.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "spotlight" : "unpackage/res/icons/40x40.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png"
+                    },
+                    "iphone" : {
+                        "app@2x" : "unpackage/res/icons/120x120.png",
+                        "app@3x" : "unpackage/res/icons/180x180.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "notification@3x" : "unpackage/res/icons/60x60.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "settings@3x" : "unpackage/res/icons/87x87.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                    }
+                }
+            },
+            "splashscreen" : {
+                "android" : {
+                    "xhdpi" : "/Users/binxinwen/Desktop/Desktop(2)/720+1242.png",
+                    "xxhdpi" : "/Users/binxinwen/Desktop/Desktop(2)/1080+1882.png"
+                },
+                "ios" : {
+                    "iphone" : {
+                        "portrait-896h@3x" : "/Users/binxinwen/Desktop/Desktop(2)/1242+2688.png",
+                        "portrait-896h@2x" : "/Users/binxinwen/Desktop/Desktop(2)/828+1792.png",
+                        "iphonex" : "/Users/binxinwen/Desktop/Desktop(2)/1125+2436.png",
+                        "retina55" : "/Users/binxinwen/Desktop/Desktop(2)/1242+2208.png",
+                        "retina47" : "/Users/binxinwen/Desktop/Desktop(2)/750+1334.png",
+                        "retina40" : "/Users/binxinwen/Desktop/Desktop(2)/640+1136.png"
+                    }
+                }
+            },
+            // 屏幕方向
+            "orientation" : [
+                "portrait-primary",
+                "landscape-primary",
+                "portrait-secondary",
+                "landscape-secondary"
+            ]
+        },
+        "compilerVersion" : 3,
+        "uniStatistics" : {
+            "enable" : true
+        },
+        "error" : {
+            "url" : "hybrid/html/error.html"
+        }
+    },
+    /* 快应用特有相关 */
+    "quickapp" : {},
+    /* 小程序特有相关 */
+    "mp-weixin" : {
+        "appid" : "",
+        "setting" : {
+            "urlCheck" : false
+        },
+        "usingComponents" : true,
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "mp-alipay" : {
+        "usingComponents" : true,
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "mp-baidu" : {
+        "usingComponents" : true,
+        "setting" : {
+            "urlCheck" : false
+        },
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "mp-toutiao" : {
+        "usingComponents" : true,
+        "setting" : {
+            "urlCheck" : false
+        },
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "h5" : {
+        "title" : "轻听树下",
+        "template" : "template.h5.html",
+        "router" : {
+            "mode" : "history",
+            "base" : "/"
+        },
+        "devServer" : {
+            "port" : 9501,
+            "https" : false
+        },
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
+        },
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "networkTimeout" : {
+        "request" : 20000,
+        "connectSocket" : 20000,
+        "uploadFile" : 20000,
+        "downloadFile" : 20000
+    },
+    "mp-qq" : {
+        "setting" : {
+            "minified" : false,
+            "urlCheck" : false
+        },
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "uniStatistics" : {
+        "enable" : false
+    }
+}
+// "push" : {
+//     "unipush" : {
+//         "description" : "消息推送"
+//     }
+// }
+/* 快应用特有相关 *//* 小程序特有相关 */
+

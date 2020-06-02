@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title></title>
+</head>
+<body>
+	<button type="button">我是错误页</button>
+</body>
+<script type="text/javascript">
+	// 获取错误信息  
+	document.addEventListener("error",function(e){  
+	    var url = e.url;  // 错误页面的url地址  
+	    var href = e.href; // 错误页面的完整路径（包括完整的协议头）  
+		console.log(url,href)
+	},false);
+</script>
+</html>

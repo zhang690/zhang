@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/sgd.css" />
+		<script type="text/javascript">
+			window.onresize = function() {
+				setHtmlFz();
+			}
+			setHtmlFz();
+
+			function setHtmlFz() {
+				// 基础值
+				var baseVal = 100;
+				// 设计稿的宽度
+				var desPage = 750;
+				// 要适配的屏幕的宽度
+				var width = document.querySelector("html").offsetWidth;
+				// 基础值*要适配的屏幕的宽度/设计稿的宽度
+				var fz = baseVal * width / desPage;
+				// 设置到html标签中
+				document.querySelector("html").style.fontSize = fz + "px";
+			}
+		</script>
+
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+	<body>
+		<div class="background">
+			<img class="Jump_background" src="img/Jump_background.png">
+			<div class="titles">
+				<div class="titless">点击页面右上角…</div>
+				<div class="titless">选择 “通过浏览器打开”</div>
+				<div class="titless">我们将会为您自动打开支付宝APP付款</div>
+			</div>
+			<img class="Browser_jump" src="img/Browser_jump.png">
+		</div>
+
+	</body>
+</html>

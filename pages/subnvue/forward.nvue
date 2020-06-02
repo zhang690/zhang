@@ -1,0 +1,145 @@
+<template>
+	<div class="wrapper">
+		<div class="top" @click="hideDrawer()"></div>
+		<div class="buttom" ref="forward">
+			<div class="li">
+				<text class="bottom-title">分享到</text>
+				<scroll-view class="scroll-view_H" scroll-x="true" @scroll="scroll" scroll-left="0" >
+					<view class="scroll-view-item_H uni-bg-red" v-for="(item, index) in fenxiang" :key="index" @click="share(item)">
+							<image class="view-item_H_image" :src="item.src"></image>
+							<text class="view-item_H_text">{{ item.name }}</text>
+					</view>
+				</scroll-view>
+			</div>
+			<div class="bottom-title_close">
+				<text class="bottom-title_text">取消</text>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	//#ifdef APP-NVUE
+	const animation = weex.requireModule('animation');
+	//#endif
+export default {
+	data() {
+		return {
+			fenxiang: [
+				{ src: '../../static/img/fenxiang1.png', name: '微信' },
+				{ src: '../../static/img/fenxiang2.png', name: '朋友圈' },
+				{ src: '../../static/img/fenxiang3.png', name: 'QQ' },
+				{ src: '../../static/img/fenxiang4.png', name: '复制链接' }
+			]
+		};
+	},
+	beforeCreate() {},
+	created() {},
+	methods: {
+		hideDrawer() {
+			uni.getCurrentSubNVue().hide('auto');
+			let content = this.$refs.content;
+			// animation.transition(
+			// 	content,
+			// 	{
+			// 		styles: { transform: `translate(0px, 1000rpx)` },
+			// 		duration: 100, //ms
+			// 		timingFunction: 'ease-in-out',
+			// 		delay: 0 //ms
+			// 	},
+			// 	() => {
+			// 		uni.getSubNVueById('forward').hide();
+			// 	}
+			// );
+		},
+		share(item){
+			console.log(item)
+			uni.showToast({
+				title:item.name
+			})
+		},
+		scroll(e) {}
+	}
+};
+</script>
+
+<style scoped>
+.wrapper {
+	flex-direction: column;
+	flex: 1;
+	text-align: center;
+	background-color: transparent;
+}
+.top {
+	background-color: #000;
+	opacity: 0.1;
+	flex: 7.5;
+}
+.li{
+	flex: .7;
+}
+.buttom {
+	background-color: #fff;
+	flex: 2.5;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color:rgba(21,21,21,1);
+	opacity:0.95;
+}
+.bottom-title {
+	height: 80rpx;
+	line-height: 80rpx;
+	text-align: center;
+	color: #fff;
+	font-size:26rpx;
+	font-weight:400;
+	color:rgba(255,255,255,1);
+	
+}
+.bottom-title_close{
+	width: 750rpx;
+	flex: 1;
+	position: absolute;
+	bottom: 0;
+	height: 100rpx;
+	line-height: 100px;
+	text-align: center;
+	color: #fff;
+	font-size:26rpx;
+	font-weight:400;
+	color:rgba(255,255,255,1);
+	border-color: rgba(51,51,51,1);
+	border-top-width: 2rpx;
+	border-style: solid;
+}
+.bottom-title_text{
+	font-size:30rpx;
+	font-family:Source Han Sans CN;
+	font-weight:400;
+	color:rgba(255,255,255,1);
+	text-align: center;
+	line-height: 100rpx;
+}
+.scroll-view_H {
+	flex: 1;
+	flex-direction: row;
+	padding:0 10px;
+	justify-content: space-between;
+	align-items: center;
+}
+.scroll-view-item_H {
+	padding: 5upx 10upx;
+	text-align: center;
+}
+.view-item_H_image {
+	width: 96rpx;
+	height: 96rpx;
+	border-radius: 25px;
+	margin-bottom: 18rpx;
+}
+.view-item_H_text {
+	font-size: 22rpx;
+	text-align: center;
+	color: #fff;
+}
+</style>

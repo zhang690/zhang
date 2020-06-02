@@ -1,0 +1,262 @@
+<template>
+	<div class="slider flex" id="slider" :style="{ width: `${width}px` }" ref="slider">
+		<div class="slider-left flex" :style="{ width: `${leftWidth}px` }" @touchmove.stop="sliderMove" @touchend.stop="sliderTouch">
+			<div class="left" :style="{ backgroundColor: backgroundColor }"></div>
+		</div>
+		<div class="slider-right flex" @touchmove.stop="sliderMove" @touchend.stop="sliderTouch" :style="{ width: `${currentWidth - leftWidth}px` }"><div class="right"></div></div>
+		<div :class="activeClass" :style="{ backgroundColor: touch ? blockOuterColor : 'rgba(0,0,0,0)', left: `${blockWidth}px` }" @click.stop="">
+			<div
+				class="block-inner flex"
+				:style="{ backgroundColor: blockBackgroundColor }"
+				@touchmove.stop.prevent="blockTouchMove"
+				@touchend="blockTouchEnd"
+				@touchstart="blockTouchStart"
+			>
+				<div class="block-inner-inner" :style="{ backgroundColor: blockColor }"></div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+export default {
+	props: {
+		min: {
+			type: Number,
+			default: 0
+		},
+		max: {
+			type: Number,
+			default: 0
+		},
+		value: {
+			type: Number,
+			default: 0
+		},
+		width: {
+			type: Number,
+			default: 0
+		},
+		ratio: {
+			type: Number,
+			default: 1
+		},
+		direction: {
+			type: String,
+			default: 'screenX'
+		},
+		backgroundColor: {
+			//滑块右侧背景条的颜色
+			type: String,
+			default: '#e9e9e9'
+		},
+		blockColor: {
+			//滑块颜色
+			type: String,
+			default: '#ffffff'
+		},
+		screenLeft: {
+			//slider距离左边距离
+			type: Number,
+			default: 0
+		},
+		iosDirection: {
+			type: Number,
+			default: 1
+		},
+		isblock: {
+			type: Boolean,
+			default: true
+		}
+	},
+	data() {
+		return {
+			oldToucesX: 0,
+			leftWidth: 0,
+			oldLeftWidth: 0,
+			touch: false,
+			isblockTemp: null
+		};
+	},
+	mounted() {},
+	methods: {
+		sliderMove(e) {
+			e.stopPropagation();
+			let touches = e.changedTouches[0];
+			this.isBlockShow();
+			this.leftWidth = touches[this.direction] * this.ratio - this.screenLeft;
+			this.leftWidth = this.leftWidth > this.currentWidth ? this.currentWidth : this.leftWidth;
+			this.leftWidth = this.leftWidth < 0 ? 0 : this.leftWidth;
+			let current = (this.leftWidth / this.currentWidth) * this.max;
+			this.$emit('moveChange', current);
+		},
+		isBlockShow() {
+			this.isblock = false;
+		},
+		sliderTouch(e) {
+			e.stopPropagation();
+			let touches = e.changedTouches[0];
+			this.leftWidth = touches[this.direction] * this.ratio - this.screenLeft;
+			this.leftWidth = this.leftWidth > this.currentWidth ? this.currentWidth : this.leftWidth;
+			this.leftWidth = this.leftWidth < 0 ? 0 : this.leftWidth;
+			this.blockTouchEnd();
+		},
+		// 触摸开始
+		blockTouchStart(e) {
+			this.isBlockShow();
+			this.touch = true;
+			this.oldLeftWidth = this.leftWidth;
+			this.oldToucesX = e.changedTouches[0][this.direction];
+		},
+		// 计算方向
+		blockTouchMove(e) {
+			let newToucesX;
+			newToucesX = e.changedTouches[0][this.direction];
+			// console.log( this.iosDirection,this.direction)
+			this.leftWidth = this.iosDirection * (newToucesX - this.oldToucesX) * this.ratio + this.oldLeftWidth;
+			this.leftWidth = this.leftWidth > this.currentWidth ? this.currentWidth : this.leftWidth;
+			this.leftWidth = this.leftWidth < 0 ? 0 : this.leftWidth;
+		},
+		// 结束触摸
+		blockTouchEnd(e) {
+			let current = (this.leftWidth / this.currentWidth) * this.max;
+			const event = { detail: { value: current } };
+			this.$emit('change', event);
+			this.touch = false;
+			this.isblock = true;
+		},
+		colorRgb(string, opacity) {
+			var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+			var sColor = string.toLowerCase();
+			if (sColor && reg.test(sColor)) {
+				if (sColor.length === 4) {
+					var sColorNew = '#';
+					for (var i = 1; i < 4; i += 1) {
+						sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
+					}
+					sColor = sColorNew;
+				}
+				//处理六位的颜色值
+				var sColorChange = [];
+				for (var i = 1; i < 7; i += 2) {
+					sColorChange.push(parseInt('0x' + sColor.slice(i, i + 2)));
+				}
+				return 'rgba(' + sColorChange.join(',') + `,${opacity}` + ')';
+			} else {
+				return sColor;
+			}
+		}
+	},
+	computed: {
+		blockOuterColor() {
+			return this.colorRgb(this.blockColor, 0.4);
+		},
+		blockBackgroundColor() {
+			return this.colorRgb(this.blockColor, 0.5);
+		},
+		currentWidth() {
+			return this.width;
+		},
+		blockWidth() {
+			return this.leftWidth - 5 < 0 ? 0 : this.leftWidth - 5;
+		},
+		activeClass() {
+			return ['block', 'flex', this.isblock ? 'isblocks' : ''];
+		},
+		duration() {
+			return this.max;
+		}
+	},
+	watch: {
+		value: {
+			immediate: true,
+			handler(newVal, oldVal) {
+				// console.log(newVal, this.max, this.currentWidth);
+				if (this.touch) return;
+				this.leftWidth = (newVal / this.max) * this.currentWidth;
+				this.leftWidth = this.leftWidth > this.currentWidth ? this.currentWidth : this.leftWidth;
+			}
+		},
+		isblock: {
+			immediate: true,
+			handler(newVal, oldVal) {
+				this.isblock = newVal;
+			}
+		},
+		// touch: {
+		// 	handler(newVal, oldVal) {
+		// 		console.log(newVal,194);
+		// 		if(!newVal){
+					
+		// 		}
+		// 	}
+		// }
+	}
+};
+</script>
+
+<style lang="scss" scoped>
+.flex {
+	/* #ifndef APP-NVUE */
+	display: flex;
+	/* #endif */
+}
+
+.slider {
+	position: relative;
+	flex-direction: row;
+	height: 20px;
+	align-items: center;
+	justify-content: center;
+	z-index: 999999;
+}
+.slider-left {
+	height: 20px;
+	flex-direction: row;
+	align-items: center;
+}
+.left {
+	flex: 1;
+	height: 2upx;
+	border-top-right-radius: 50%;
+	border-bottom-right-radius: 50%;
+	background-color:rgba(255,255,255,1);
+}
+.slider-right {
+	height: 20px;
+	flex-direction: row;
+	align-items: center;
+}
+.right {
+	height: 2upx;
+	// background:rgba(255,255,255,1);
+	background-color:rgba(255,255,255,.2);
+	border-top-right-radius: 50%;
+	border-bottom-right-radius: 50%;
+	opacity:0.2;
+	flex: 1;
+}
+.block {
+	position: absolute;
+	height: 10upx;
+	width: 10upx;
+	justify-content: center;
+	align-items: center;
+	z-index: 999999;
+}
+.block-inner {
+	height: 10upx;
+	width: 10upx;
+	border-radius: 50%;
+	justify-content: center;
+	align-items: center;
+}
+.block-inner-inner {
+	height: 10upx;
+	width: 10upx;
+	border-radius: 5upx;
+}
+.isblocks {
+	opacity: 0;
+}
+</style>

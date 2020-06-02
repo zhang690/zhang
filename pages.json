@@ -1,0 +1,287 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+
+		{
+			"path": "pages/user/loginIndex", //app登录首页
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					//app页面不显示滚动条
+					"scrollIndicator": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/video/index", //视频
+			"style": {
+				"navigationBarTitleText": "video",
+				// "navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent" //透明渐变导航栏 App-nvue 2.4.4+ 支持
+					},
+					"subNVues": [{
+							"id": "comment",
+							"path": "pages/subnvue/comment",
+							"style": {
+								"height": "100%",
+								"position": "absolute",
+								"bottom": "0",
+								"background": "transparent",
+								"zindex": 1
+							}
+						}, {
+							"id": "input-box",
+							"path": "pages/subnvue/input-box",
+							"style": {
+								"height": "100%",
+								"position": "absolute",
+								"bottom": "0",
+								"background": "transparent",
+								"zindex": 2
+							}
+						},
+						{
+							"id": "forward",
+							"path": "pages/subnvue/forward",
+							"type": "popup",
+							"style": {
+								"height": "100%",
+								"position": "absolute",
+								"bottom": "0",
+								"background": "transparent",
+								"zindex": 1
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"path": "pages/home/home", //首页
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom",
+				"app-plus": {
+					//app页面不显示滚动条
+					"scrollIndicator": "none"
+				}
+			}
+		},
+
+		{
+			"path": "pages/user/loginRegister", //用户登录
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "white",
+				"backgroundColor": "#fff",
+				"app-plus": {
+					//app页面不显示滚动条
+					"scrollIndicator": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/home/ProgressBar", //进度条
+			"style": {}
+		},
+		{
+			"path": "pages/mine/mine", //我的
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					//app页面不显示滚动条
+					"scrollIndicator": "none"
+				}
+			}
+		}, {
+			"path": "pages/study/study", //学习
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					//app页面不显示滚动条
+					"scrollIndicator": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/index/index", //demo测试页
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/study/courseLearning/courseLearning", //课程学习
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					//app页面不显示滚动条
+					// "scrollIndicator": "none"
+					// 将回弹属性关掉
+					"popGesture": "none",
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/play/play", //音乐播放页
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"animationType": "slide-in-bottom",
+					"animationDuration": 300,
+					"bounce": "none",
+					"popGesture": "none"
+				}
+			}
+		}, {
+			"path": "pages/mine/buy/buy",
+			"style": {
+				"navigationBarTitleText": "确认订单"
+			}
+		}, {
+			"path": "pages/mine/accountSetting/accountSetting",
+			"style": {
+				"navigationBarTitleText": "账户设置"
+			}
+		}, {
+			"path": "pages/mine/My_balance/My_balance",
+			"style": {
+				"navigationBarTitleText": "我的余额"
+			}
+		}, {
+
+			"path": "pages/study/coursewareDetails/coursewareDetails",
+			"style": {
+				"app-plus": {
+					"bounce": "none",
+					"popGesture": "none"
+				}
+			}
+		}, {
+			"path": "pages/user/WeChat_correlation/WeChat_correlation",
+			"style": {}
+		}, {
+			"path": "pages/mine/My_order/My_order",
+			"style": {
+				"navigationBarTitleText": "我的订单"
+			}
+		}, {
+			"path": "pages/mine/My_order/Order_details/Order_details",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		}
+
+		, {
+			"path": "pages/user/Agreement",
+			"style": {}
+		}, {
+			"path": "pages/mine/about/about",
+			"style": {
+				"navigationBarTitleText": "轻听树下"
+			}
+		}, {
+			"path": "pages/mine/accountSetting/phoneBind/phoneBind",
+			"style": {}
+		}, {
+			"path": "pages/video/Category/Category",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "小树公开课"
+			}
+		},
+		{
+			"path": "pages/search/details-search",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/famous/famous",
+			"style": {
+				"navigationBarTitleText": "名师课",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/mine/myLove/myLove",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "我喜欢的"
+			}
+		},
+		// test
+		{
+			"path": "pages/test/test",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/testvideo/testvideo",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}
+	],
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#3cc51f",
+		// "borderStyle": "black",
+		// "backgroundColor": "#ffffff",
+		"spacing": "4px",
+		"iconWidth": "20px",
+		"fontSize": "12px",
+		"height": "56px",
+		// #ifdef APP-PLUS
+		"borderStyle": "#e6e6e6",
+		// #endif
+		"backgroundColor": "#fdfdfd",
+		"list": [{
+				"pagePath": "pages/home/home",
+				"iconPath": "static/images/icon/home_A.png",
+				"selectedIconPath": "static/images/icon/home_b.png",
+				"text": "首页"
+			}, {
+				"pagePath": "pages/study/study",
+				"iconPath": "static/images/icon/recently_A.png",
+				"selectedIconPath": "static/images/icon/recently_B.png",
+				"text": "学习"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"iconPath": "/static/images/icon/my_A.png",
+				"selectedIconPath": "/static/images/icon/my_B.png",
+				"text": "我的"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarBackgroundColor": "#FFFFFF"
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@/components/uni-$1/uni-$1.vue"
+		}
+	}
+	// ,
+	// "condition": { //模式配置，仅开发期间生效
+	//     "current": 0, //当前激活的模式（list 的索引项）
+	//     "list": [{
+	//             "name": "swiper", //模式名称
+	//             "path": "pages/component/swiper/swiper", //启动页面，必选
+	//             "query": "interval=4000&autoplay=false" //启动参数，在页面的onLoad函数里面得到。
+	//         },
+	//         {
+	//             "name": "test",
+	//             "path": "pages/component/switch/switch"
+	//         }
+	//     ]
+	// }
+}

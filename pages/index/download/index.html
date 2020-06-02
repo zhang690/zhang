@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title></title>
+		<script type="text/javascript">
+			window.onresize = function() {
+				setHtmlFz();
+			}
+			setHtmlFz();
+
+			function setHtmlFz() {
+				// 基础值
+				var baseVal = 100;
+				// 设计稿的宽度
+				var desPage = 750;
+				// 要适配的屏幕的宽度
+				var width = document.querySelector("html").offsetWidth;
+				// 基础值*要适配的屏幕的宽度/设计稿的宽度
+				var fz = baseVal * width / desPage;
+				// 设置到html标签中
+				document.querySelector("html").style.fontSize = fz + "px";
+			}
+		</script>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				border: 0;
+			}
+
+			body {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+			}
+
+			.background {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="css/sgd.css"/>
+	</head>
+	<body>
+		<img class="background" src="img/background.png">
+		<div class="box">
+			<div class="boxs">
+				<div class="left">
+					<img class="logo" src="img/logo.png">
+					<div class="title">
+						<div class="top">轻听树下</div>
+						<div class="bottom">成为更好的家长</div>
+					</div>
+				</div>
+				<div class="Download_now" id="downloadTop">立即下载</div>
+			</div>
+		</div>
+		
+		<div class="sgd" id="Otherbrowsersopen">
+			<img class="Jump_background" src="img/Jump_background.png">
+			<div class="titles">
+				<div class="titless">点击页面右上角…</div>
+				<div class="titless">选择 “通过浏览器打开”</div>
+				<div class="titless">我们将会为您自动打开支付宝APP付款</div>
+			</div>
+			<img class="Browser_jump" src="img/Browser_jump.png">
+		</div>
+		<script type="text/javascript">
+			var Otherbrowsersopen = document.getElementById("Otherbrowsersopen");
+			var downloadTop = document.getElementById("downloadTop");
+			downloadTop.onclick = function() {
+				console.log(321)
+				Otherbrowsersopen.style.display = "block";
+			}
+		</script>
+		
+	</body>
+</html>

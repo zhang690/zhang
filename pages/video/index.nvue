@@ -1,0 +1,547 @@
+<template>
+	<div class="page">
+		<div class="cover-view-center" v-if="distanceX == 0">
+			<div class="video_durations" :style="{ top: `${fullControlsHeight / 1.2}px` }" v-if="video_durations">
+				<text class="video_durations_text">{{ calcTimer(times) }}</text>
+				<text style="color: #F8F8F8;margin-left:24upx;margin-right: 24upx;">/</text>
+				<text class="durations_text">{{ calcTimer(durations) }}</text>
+			</div>
+
+			<div :style="{ height: height, width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+				<div class="cover-view-left" v-if="!video_durations">
+					<div class="left-text_top" @click.stop="toCourse">
+						<text></text>
+						<text></text>
+					</div>
+					<text></text>
+				</div>
+				<div class="cover-view-right" v-if="distanceX == 0">
+					<image class="img" @click.stop="tapAvater"></image>
+					<text class="right-texts"></text>
+					<image class="img" @click.stop="tapLove"></image>
+					<text class="right-texts"></text>
+					<image class="img" @click.stop="tapMsg"></image>
+					<text class="right-texts"></text>
+					<image class="img" @click.stop="tapShare"></image>
+					<text class="right-texts"></text>
+				</div>
+				<div class="cover-view-bottom" @click.stop="showInput">
+					<input class="inputs" @click.stop="showInput" disabled v-model="message" placeholder-class="input_placeholder" />
+				</div>
+			</div>
+		</div>
+		<div class="swiper" ref="swiper">
+			<block v-for="(item, idx) in videoList" :key="idx" v-if="videoList.length >= 1">
+				<div class="video-box" :style="{ height: height }">
+					<block v-if="Math.abs(index - idx) <= 1">
+						<chunlei-video
+							ref="video"
+							class="video"
+							:src="item.src"
+							:height="height"
+							:width="width"
+							:play="item.flag"
+							:gDuration="item.duration"
+							:objectFit="item.objectFit"
+							:initialTime="item.initialTime"
+							@pause="pauseVideo"
+							@palyTime="palyTime"
+						></chunlei-video>
+						<cover-view class="cover-view-left" v-if="!video_durations">
+							<block v-if="item.at" class="left-text" @click.stop="toCourse" :style="{ width: `${item.at.length * 15}px` }">
+								<cover-image src="../../static/img/symbol.png" class="symbol_img"></cover-image>
+								<text class="left-text_text">{{ item.at }}</text>
+							</block>
+							<text class="left-text_content">{{ item.content }}</text>
+						</cover-view>
+						<cover-view class="cover-view-right" v-if="!video_durations">
+							<cover-image :src="item.avater" class="avater avater_img" @click.stop="tapAvater"></cover-image>
+							<text class="right-text">{{ item.author }}</text>
+							<cover-image :src="item.check ? '../../static/img/axc.png' : '../../static/img/bed.png'" class="img" @click.stop="tapLove"></cover-image>
+							<text class="right-text">{{ item.like }}</text>
+							<cover-image src="../../static/img/ay2.png" class="img" @click.stop="tapMsg"></cover-image>
+							<text class="right-text">{{ item.comment }}</text>
+							<cover-image src="../../static/img/share.png" class="img" @click.stop="tapShare"></cover-image>
+							<text class="right-text">{{ item.forward_num }}</text>
+						</cover-view>
+						<cover-view class="cover-slider">
+							<chunLei-slider
+								:max="duration"
+								:value="times"
+								:style="{ width: `${fullControlsWidth}px` }"
+								:screenLeft="0"
+								:width="fullControlsWidth"
+								@change="changeCurrent"
+								:ratio="1"
+								:direction="'screenX'"
+								:backgroundColor="color"
+								:blockColor="color"
+								@moveChange="moveChange"
+							></chunLei-slider>
+						</cover-view>
+						<cover-view class="cover-view-bottom" @click.stop="showInput">
+							<input class="inputs" @click.stop="showInput" disabled v-model="message" :placeholder="placeholder" placeholder-class="input_placeholder" />
+						</cover-view>
+					</block>
+				</div>
+			</block>
+		</div>
+
+		<div class="left-div" :style="{ height: height, width: width, left: `${-parseInt(width)}px` }" ref="left" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+			<text class="title-text" @click.stop="clickbt"></text>
+		</div>
+		<div class="right-div" :style="{ height: height, width: width, right: `${-parseInt(width)}px` }" ref="right" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+			<text class="title-text"></text>
+		</div>
+	</div>
+</template>
+
+<script>
+import chunleiVideo from '../../components/chunlei-video/chunlei-video';
+import chunLeiSlider from '../../components/chunLei-slider/chunLei-slider';
+import scrollMixins from './scrollMixins';
+import * as apis from '../../apis/index.js';
+const BindingX = uni.requireNativePlugin('bindingx');
+const animation = weex.requireModule('animation');
+const modal = weex.requireModule('modal');
+
+export default {
+	mixins: [scrollMixins],
+	components: {
+		chunleiVideo,
+		chunLeiSlider
+	},
+	computed: {
+		durations() {
+			return Math.floor(this.duration);
+		},
+		times() {
+			return this.time;
+		},
+		initialTimes() {
+			return this.initialTime;
+		}
+	},
+	data() {
+		return {
+			isShow: false,
+			page: 1,
+			videId: 0,
+			index: 0,
+			pagesize: 10,
+			total: 0,
+			iconURL: 'https://file.qingtingshuxia.com/',
+			video_durations: false,
+			ifSilder: true,
+			time: 0,
+			duration: 0,
+			playFirst: true,
+			color: '#fff',
+			platform: '',
+			fullControlsWidth: '',
+			fullControlsHeight: '',
+			flag: true,
+			message: '',
+			initialTime: 0,
+			placeholder: '留下你的精彩评论吧',
+			videoList: []
+		};
+	},
+	async created() {
+		// //隐藏subnvue
+		// uni.getSubNVueById('comment').hide();
+		// uni.getSubNVueById('input-box').hide();
+		this.init();
+		//隐藏subnvue
+
+		this.fullControlsWidth = uni.getSystemInfoSync().screenWidth;
+		this.fullControlsHeight = uni.getSystemInfoSync().screenHeight;
+
+		try {
+			const value = uni.getStorageSync('videId');
+			if (value) {
+				this.videId = value;
+				console.log(value);
+			}
+		} catch (e) {
+			// error
+		}
+	},
+	async beforeCreate() {
+		// #ifdef APP-NVUE
+		// var domModule = weex.requireModule('dom');
+		// domModule.addRule('fontFace', {
+		// 	fontFamily: 'texticon',
+		// 	src: "url('/static/chunleivideo/texticon.ttf')"
+		// });
+		// #endif
+	},
+	async mounted() {
+		await this.pushVideoList();
+		console.log(this.videId);
+		var ret6 = this.videoList.findIndex((value, index) => {
+			if (value.id == this.videId) {
+				console.log(index);
+				return String(index);
+			}
+		});
+		console.log(ret6, 2133123);
+		this.videoPlay(ret6);
+		this.bindCurrentX(ret6, 300); //滚动至4
+	},
+	onHide() {
+		for (let item of this.videoList) {
+			item.flag = false;
+		}
+	},
+
+	methods: {
+		tapShare(e) {
+			//分享
+			e.stopPropagation();
+			if (this.distanceX != 0) return;
+			uni.getSubNVueById('forward').show('slide-in-bottom', 200, () => {});
+		},
+		is_video_durations() {
+			this.video_durations = true;
+		},
+		calcTimer(timer) {
+			if (timer === 0 || typeof timer !== 'number') {
+				return '00:00';
+			}
+			let mm = Math.floor(timer / 60);
+			let ss = Math.floor(timer % 60);
+			if (mm < 10) {
+				mm = '0' + mm;
+			}
+			if (ss < 10) {
+				ss = '0' + ss;
+			}
+			return mm + ':' + ss;
+		},
+		changeCurrent(e) {
+			uni.$emit('toSeek', e.detail.value);
+			this.video_durations = false;
+		},
+		moveChange(e) {
+			this.time = e;
+			this.is_video_durations();
+		},
+		toCourse(e) {
+			//去课程
+			e.stopPropagation();
+			if (this.distanceX != 0) return;
+			uni.showToast({
+				title: '去课程',
+				icon: 'none'
+			});
+		},
+		showInput(e) {
+			e.stopPropagation();
+			if (this.distanceX != 0) return;
+			console.log(2323);
+			uni.getSubNVueById('input-box').show('none', 0, () => {
+				this.flag = false;
+				uni.$emit('showInput');
+			});
+		},
+		clickbt() {
+			console.log(11);
+		},
+		palyTime(e) {
+			this.time = e.time;
+			this.duration = e.duration;
+		},
+		//设置参数
+		init() {
+			this.typeX = false; //开启左右滑动
+			this.playCount = 2; //剩余多少视频加载视频列表
+			this.startDistance = 5; //判断左右上下拖动的启动距离 px
+			this.minTime = 300; //判断快速滑动的时间,该时间内无视回弹距离判断
+			this.backDistance = 200; //判断上下滑动的回弹距离 px
+		},
+		async pushVideoList() {
+			//添加视频
+			let _that = this;
+			let videoGroup = [];
+			let videoDetail = await apis.videoDetail({ page: this.page, pagesize: this.pagesize });
+			if (videoDetail.code != 200) {
+				uni.showToast({
+					title: videoDetail.msg,
+					icon: 'none'
+				});
+				return;
+			}
+			this.total = videoDetail.data.total;
+			if (_that.videoList.length >= this.total) {
+				return;
+			}
+			await videoDetail.data.list.forEach((item, i) => {
+				videoGroup.push({
+					id: item.id,
+					src: _that.iconURL + item.video,
+					content: item.video_desc,
+					flag: false,
+					check: item.click_good_status,
+					like: item.good_num,
+					comment: item.answer_num,
+					at: item.course_info.title,
+					avater: _that.iconURL + item.author_avatar,
+					initialTime: 0,
+					author: item.author,
+					duration: item.video_time,
+					forward_num: item.forward_num,
+					objectFit: item.is_horizontal ? 'contain' : 'fill'
+				});
+			});
+			_that.videoList = [..._that.videoList, ...videoGroup];
+			this.page++;
+			console.log(_that.videoList, this.page, 286);
+		},
+		async tapLove(e) {
+			e.stopPropagation();
+			if (this.distanceX != 0) return;
+			console.log(this.videoList[this.index].id);
+			let videoClickGood = await apis.videoClickGood({ video_id: this.videoList[this.index].id });
+			console.log(videoClickGood);
+			if (videoClickGood.code != 200) {
+				uni.showToast({
+					title: videoClickGood.msg,
+					icon: 'none'
+				});
+				return;
+			} else {
+				// this.videoList[this.index].check = !this.videoList[this.index].check;
+				// videoClickGood.data?this.videoList[this.index].good_num++ : this.videoList[this.index].good_num--
+				// console.log(videoClickGood.data)
+				let likeNum = this.videoList[this.index].like;
+				console.log(typeof likeNum);
+				if (videoClickGood.data) {
+					this.$set(this.videoList[this.index], 'check', true);
+					if (typeof likeNum != 'number') return;
+					likeNum++;
+					this.$set(this.videoList[this.index], 'like', likeNum);
+				} else {
+					this.$set(this.videoList[this.index], 'check', false);
+					if (typeof likeNum != 'number') return;
+					likeNum--;
+					this.$set(this.videoList[this.index], 'like', likeNum);
+				}
+				console.log(this.videoList[this.index], likeNum);
+			}
+		},
+		tapAvater(e) {
+			e.stopPropagation();
+			if (this.distanceX != 0) return;
+			uni.showToast({
+				icon: 'none',
+				title: `点击索引为${this.index}的头像`
+			});
+		},
+		tapMsg(e) {
+			e.stopPropagation();
+			if (this.distanceX != 0) return;
+			uni.getSubNVueById('comment').show('none', 0, () => {
+				uni.$emit('showComment', this.videoList[this.index].content);
+			});
+		}
+	},
+	// watch: {
+	// 	duration(val, oldval) {
+	// 		this.duration = val;
+	// 		console.log(this.duration);
+	// 	}
+	// }
+};
+</script>
+
+<style lang="scss" scoped>
+.page {
+	flex: 1;
+	overflow: hidden;
+	position: relative;
+}
+.swiper {
+	position: relative;
+	background-color: #000;
+}
+.left-div {
+	position: absolute;
+	top: 0;
+	justify-content: center;
+	align-items: center;
+}
+.right-div {
+	position: absolute;
+	top: 0;
+	justify-content: center;
+	align-items: center;
+}
+.title-text {
+	font-size: 16px;
+	color: #000000;
+}
+.video-box {
+	position: relative;
+	background-color: #000;
+}
+.cover-view-center {
+	position: fixed;
+	justify-content: center;
+	align-items: center;
+	z-index: 999;
+}
+.cover-view-top {
+	position: fixed;
+	width: 750rpx;
+	height: 150px;
+	overflow: hidden;
+}
+.cover-view-left {
+	position: absolute;
+	margin-left: 32upx;
+	width: 530upx;
+	height: 156upx;
+	bottom: 200upx;
+	z-index: 9999;
+	font-size: 16px;
+	color: #ffffff;
+	// background-color: red;
+}
+.symbol_img {
+	width: 28upx;
+	height: 28upx;
+	margin-right: 10upx;
+	margin-top: -2px;
+}
+.left-text {
+	position: relative;
+	width: 266upx;
+	height: 48upx;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	background-color: rgba(0, 0, 0, 1);
+	opacity: 0.7;
+	border-radius: 12px;
+	margin-bottom: 20upx;
+}
+.left-text_top {
+	position: relative;
+	width: 266upx;
+	height: 48upx;
+}
+.left-text_text {
+	font-size: 24upx;
+	font-family: Source Han Sans CN;
+	font-weight: 400;
+	color: rgba(255, 255, 255, 1);
+}
+.left-text_content {
+	font-size: 15px;
+	font-family: Source Han Sans CN;
+	font-weight: 400;
+	color: rgba(255, 255, 255, 1);
+	line-height: 48upx;
+}
+.avater {
+	border-radius: 50upx;
+	border-color: #fff;
+	border-style: solid;
+	border-width: 2px;
+	margin-bottom: 17upx;
+}
+
+.cover-view-right {
+	position: absolute;
+	bottom: 208upx;
+	right: 20upx;
+	z-index: 9999;
+	width: 88upx;
+	// background-color: #007AFF;
+}
+
+.right-texts {
+	font-size: 14px;
+	color: #ffffff;
+	margin-bottom: 40upx;
+	height: 20px;
+}
+.right-text {
+	font-size: 14px;
+	color: #ffffff;
+	margin-bottom: 40upx;
+	height: 20px;
+	text-align: center;
+	font-size: 24upx;
+	font-family: PingFang SC;
+	font-weight: 400;
+	color: rgba(255, 255, 255, 1);
+}
+.img {
+	width: 66upx;
+	height: 58upx;
+	margin-left: 11upx;
+	opacity: 0.9;
+}
+.avater_img {
+	width: 88upx;
+	height: 88upx;
+	opacity: 0.9;
+}
+
+.cover-view-bottom {
+	position: fixed;
+	bottom: 0upx;
+	left: 0;
+	z-index: 999999;
+	width: 750upx;
+	height: 96upx;
+	padding-top: 20upx;
+	// background-color: red;
+}
+.inputs {
+	margin-left: 40upx;
+	// margin-top: 34upx;
+	// background-color: #4cd964;
+}
+.input_placeholder {
+	font-size: 13px;
+	font-family: PingFang SC;
+	font-weight: 400;
+	color: rgba(255, 255, 255, 1);
+}
+.cover-slider {
+	position: fixed;
+	bottom: 80upx;
+	left: 0;
+	z-index: 99999;
+	width: 750upx;
+	height: 20px;
+	// background-color: red;
+}
+.video_durations {
+	position: absolute;
+	z-index: 9999;
+	height: 80px;
+	color: #fff;
+	// left: 50%;
+	height: 40upx;
+	width: 750upx;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+}
+.video_durations_text {
+	font-size: 46upx;
+	font-family: Source Han Sans CN;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 1);
+}
+.durations_text {
+	font-size: 46upx;
+	font-family: Source Han Sans CN;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 1);
+}
+</style>

@@ -1,0 +1,228 @@
+<template>
+	<div class="subnvue flex" @click.stop="">
+		<div class="mask" @click="hide()"></div>
+		<div class="content flex" ref="content">
+			<div class="top flex">
+				<text class="title">{{ count>0?count+'条评论':'暂无评论' }}</text>
+			</div>
+			<scroll-view scroll-y class="srcoll-view">
+				<div v-for="(item, index) in dataList" class="card" :key="index">
+					<div class="card-left">
+						<image class="card-image" src="../../static/logo.png"></image>
+						<div class="card-content">
+							<text class="card-name">{{ item.name }}</text>
+							<text class="card-msg">{{ item.message }}</text>
+							<text class="card-time">{{ item.time }}</text>
+						</div>
+					</div>
+					<div class="card-right">
+						<text class="card-btn" @click="report(item)">举报</text>
+					</div>
+				</div>
+			</scroll-view>
+			<div class="bottom flex" @click="showInput"><input v-if="flag" class="input" @click="showInput" disabled v-model="message" 
+			:placeholder="placeholder" placeholder-style="color:#999999"/></div>
+		</div>
+	</div>
+</template>
+
+<script>
+//#ifdef APP-NVUE
+const animation = weex.requireModule('animation');
+const modal = weex.requireModule('modal');
+//#endif
+export default {
+	data() {
+		return {
+			count: 2,
+			flag: true,
+			canHide: false,
+			message: '',
+			placeholder: '有爱评论，说点儿好听的~',
+			reply: '',
+			dataList: [
+			{ name: '天天向上', time: '2020-5-9  15:30:30', message: '哈哈哈哈哈哈姥姥太可爱了', reply: '春雷' },
+			{ name: '快乐大本营', time: '2020-5-9  15:30:30', message: '哈哈哈哈哈哈姥姥太可爱了', reply: '春雷' },
+			{ name: '偶像来了', time: '2020-5-9  15:30:30', message: '哈哈哈哈哈哈姥姥太可爱了', reply: '春雷' },
+			{ name: 'running man', time: '2020-5-9  15:30:30', message: '哈哈哈哈哈哈姥姥太可爱了', reply: '春雷' },
+			{ name: '你的茜茜上线啦', time: '2020-5-9  15:30:30', message: '哈哈哈哈哈哈姥姥太可爱了', reply: '春雷' },
+			{ name: '张三', time: '2020-5-9  15:30:30', message: '下载来试试下载来试试下载来试试下载来试试下载来试试下载来试试下载来试试下载来试试下载来试试下载来试试', reply: '春雷' },
+			{ name: '你的茜茜上线啦', time: '2020-5-9  15:30:30', message: '哈哈哈哈哈哈姥姥太可爱了', reply: '春雷' }]
+		};
+	},
+	// beforeCreate() {
+	// 	// #ifdef APP-NVUE
+	// 	var domModule = weex.requireModule('dom');
+	// 	domModule.addRule('fontFace', {
+	// 		'fontFamily': "iconfont1",
+	// 		'src': "url('/static/subnvue/iconfont.ttf')"
+	// 	});
+	// 	// #endif
+	// },
+	created() {
+		uni.$on('showComment', this.showComment);
+		uni.$on('sendComment', this.sendComment);
+	},
+	destroyed() {
+		uni.$off('showComment');
+		uni.$off('sendComment');
+	},
+	methods: {
+		report(obj){
+			uni.showToast({
+				icon: 'none',
+				title: '举报：'+obj.name,
+			});
+		},
+		replyName(name) {
+			this.reply = name;
+			this.placeholder = `回复 ${name} :`;
+		},
+		//发送评论
+		sendComment(val) {
+			console.log(val);
+			this.dataList.push({
+				name: '春雷',
+				time: '04-03',
+				message: val,
+				reply: this.reply
+			});
+			this.reply = '';
+		},
+		//显示评论
+		showComment(val) {
+			this.flag = true;
+			this.canHide = false;
+			let content = this.$refs.content;
+			animation.transition(
+				content,
+				{
+					styles: { transform: `translate(0px, 0px)` },
+					duration: 200, //ms
+					timingFunction: 'ease-in-out',
+					delay: 0 //ms
+				},
+				() => {
+					this.canHide = true;
+				}
+			);
+		},
+		hide() {
+			if (!this.canHide) return;
+			let content = this.$refs.content;
+			animation.transition(
+				content,
+				{
+					styles: { transform: `translate(0px, 1000rpx)` },
+					duration: 200, //ms
+					timingFunction: 'ease-in-out',
+					delay: 0 //ms
+				},
+				() => {
+					uni.getSubNVueById('comment').hide();
+				}
+			);
+		},
+		showInput() {
+			uni.getSubNVueById('input-box').show('none', 0, () => {
+				this.flag = false;
+				uni.$emit('showInput');
+			});
+		}
+	}
+};
+</script>
+
+<style lang="scss" scoped>
+.subnvue {
+	flex-direction: column;
+	flex: 1;
+	background-color: transparent;
+	position: relative;
+}
+.mask {
+	flex-direction: column;
+	flex: 1;
+}
+.content {
+	position: absolute;
+	background-color: rgba(21,21,21,0.9);
+	width: 750rpx;
+	bottom: 0;
+	height: 974rpx;
+	flex-direction: column;
+	justify-content: space-between;
+	border-top-left-radius: 16rpx;
+	border-top-right-radius: 16rpx;
+}
+.top {
+	height: 80rpx;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+.title {
+	color: #FFFFFF;
+	font-size: 26rpx;
+}
+/* 底部输入框 */
+.bottom {
+	align-items: center;
+	flex-direction: row;
+	background-color: #000;
+}
+.input {
+	flex-direction: row;
+	align-items: center;
+	flex: 1;
+	height: 98rpx;
+	padding: 30rpx 34rpx;
+	font-size: 26rpx;
+}
+/* 评论滚动区 */
+.srcoll-view {
+	flex: 1;
+}
+.card {
+	position: relative;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 25rpx 32rpx;
+}
+.card-left {
+	flex-direction: row;
+	justify-content: flex-start;
+}
+.card-image {
+	height: 64rpx;
+	width: 64rpx;
+	border-radius: 50%;
+	margin-right: 24rpx;
+}
+.card-content {
+	width: 500rpx;
+	flex-direction: column;
+}
+.card-name {
+	color: #DBDBDB;
+	font-size:26rpx;
+	line-height: 28rpx;
+	padding-bottom: 9rpx;
+}
+.card-msg {
+	color: #DBDBDB;
+	font-size:30rpx;
+	line-height: 40rpx;
+	padding-bottom: 18rpx;
+}
+.card-time{
+	color: #999999;
+	font-size:26rpx;
+	line-height: 28rpx;
+}
+.card-btn{
+	color: #B09814;
+	font-size:26rpx;
+	line-height: 28rpx;
+}
+</style>
